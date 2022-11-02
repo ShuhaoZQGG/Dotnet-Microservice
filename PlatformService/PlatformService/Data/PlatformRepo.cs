@@ -1,27 +1,44 @@
-﻿using PlatformService.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PlatformService.Models;
 
 namespace PlatformService.Data
 {
     public class PlatformRepo: IPlatformRepo
     {
+        private readonly AppDbContext _context;
+        public PlatformRepo(AppDbContext context)
+        {
+            _context = context;
+        }
         public bool SaveChanges()
         {
-            throw new NotImplementedException();
+            return _context.SaveChanges() >= 0;
         }
 
-        public IEnumerable<Platform> GetAllPlatforms()
+        public async Task<IEnumerable<Platform>> GetAllPlatforms()
         {
-            throw new NotImplementedException();
+            return await _context.Platforms.ToListAsync();
         }
 
-        public Platform GetPlatformById(int id)
+        public async Task<Platform> GetPlatformById(int id)
         {
-            throw new NotImplementedException();
+            var platform = await _context.Platforms.FirstOrDefaultAsync(p => p.Id == id);
+            if (platform == null)
+            {
+                throw new KeyNotFoundException("The give id is not found");
+            }
+
+            return platform;
         }
 
-        public void CreatePlatform(Platform platform)
+        public async Task CreatePlatform(Platform platform)
         {
-            throw new NotImplementedException();
+            if (platform == null)
+            {
+                throw new ArgumentNullException("Input field cannot be null");
+            }
+
+            await _context.Platforms.AddAsync(platform);
         }
     }
 }
