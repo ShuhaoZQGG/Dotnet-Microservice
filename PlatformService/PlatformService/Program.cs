@@ -29,6 +29,9 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 // Register services for dependency injection
 builder.Services.AddScoped<IPlatformRepo, PlatformRepo>();
 
+// Register AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,5 +47,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await PrepDb.PrepPopulation(app);
 
 app.Run();
