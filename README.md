@@ -5,10 +5,10 @@ A project aims for learning and practing to build a microservice on the **.Net 6
 **Nginx** for proxy and **Api Gateway** for the security measures
 
 ## Nuget Packages
-AutoMapper
-AutoMapper.Extensions.Microsoft.DependencyInjection
-Microsoft.EntityFrameworkCore
-Microsoft.EntityFrameworkCore.Design
-Microsoft.EntityFrameworkCore.InMemory
-Microsoft.EntityFrameworkCore.SqlServer
+AutoMapper\
+AutoMapper.Extensions.Microsoft.DependencyInjection\
+Microsoft.EntityFrameworkCore\
+Microsoft.EntityFrameworkCore.Design\
+Microsoft.EntityFrameworkCore.InMemory\
+Microsoft.EntityFrameworkCore.SqlServer\
 Swashbuckle.AspNetCore
