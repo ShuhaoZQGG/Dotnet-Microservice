@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
+using PlatformService.Configuration;
 using PlatformService.Data;
+using PlatformService.SyncMessageServices.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +35,18 @@ builder.Services.AddScoped<IPlatformRepo, PlatformRepo>();
 // Register AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// Register Configurations
+builder.Services.Configure<CommandService>(builder.Configuration.GetSection("CommandService"));
+
+builder.Services.AddHttpClient<ICommandMessageClient, CommandMessageClient>();
+
+builder.Services.AddLogging(opt =>
+{
+  opt.AddSimpleConsole(opt =>
+  {
+    opt.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ";
+  });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
