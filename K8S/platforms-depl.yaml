@@ -1,8 +1,10 @@
+# Create a pod for platformservice container
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: platforms-depl
 spec:
+  # Replicas of the service
   replicas: 1
   selector:
     matchLabels:
