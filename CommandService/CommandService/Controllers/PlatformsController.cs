@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CommandService.Controllers
 {
   // need to change this later, as this will have conflict with the route in platformservice when we use api gateway
-  [Route("api/v1/[controller]")]
+  [Route("api/v1/c/[controller]")]
   [ApiController]
   public class PlatformsController : ControllerBase
   {
