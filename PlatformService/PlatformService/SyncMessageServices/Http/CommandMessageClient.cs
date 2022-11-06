@@ -10,10 +10,13 @@ namespace PlatformService.SyncMessageServices.Http
   {
     private readonly HttpClient _httpClient;
     private readonly string _platformsUrl;
-    public CommandMessageClient(HttpClient httpClient, IOptions<CommandService> CommandServiceConfig)
+    private readonly ILogger<CommandMessageClient> _logger;
+    public CommandMessageClient(HttpClient httpClient, IOptions<CommandService> CommandServiceConfig, ILogger<CommandMessageClient> logger)
     {
       _httpClient = httpClient;
       _platformsUrl = CommandServiceConfig.Value.PlatformsUrl;
+      _logger = logger;
+      _logger.LogInformation("platformUrl: " + _platformsUrl);
     }
     public async Task SendPlatformToCommand(PlatformReadDto platform)
     {
