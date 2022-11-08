@@ -24,10 +24,24 @@ builder.Services.AddSwaggerGen();
 //});
 
 // Add DbContext to services
-builder.Services.AddDbContext<AppDbContext>(opt =>
+var sqlServerConfig = builder.Configuration.GetSection("SqlServer").Get<SqlServer>();
+if (builder.Environment.IsProduction())
 {
+  Console.WriteLine("---> Production Environment, Using Sql Server Database");
+  builder.Services.AddDbContext<AppDbContext>(opt =>
+  {
+    opt.UseSqlServer(sqlServerConfig.PlatformsConnectionString);
+  });
+} 
+else
+{
+  Console.WriteLine("---> Development Environment, Using In Memory Database");
+  builder.Services.AddDbContext<AppDbContext>(opt =>
+  {
     opt.UseInMemoryDatabase("InMem");
-});
+  });
+}
+
 
 // Register services for dependency injection
 builder.Services.AddScoped<IPlatformRepo, PlatformRepo>();
@@ -63,6 +77,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await PrepDb.PrepPopulation(app);
+await PrepDb.PrepPopulation(app, app.Environment.IsProduction());
 
 app.Run();

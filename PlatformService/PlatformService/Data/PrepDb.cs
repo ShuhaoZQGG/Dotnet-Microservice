@@ -3,18 +3,30 @@ using PlatformService.Models;
 
 namespace PlatformService.Data
 {
-    public static class PrepDb
+    public class PrepDb
     {
-        public static async Task PrepPopulation(IApplicationBuilder app)
+        public static async Task PrepPopulation(IApplicationBuilder app, bool isProd)
         {
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
-                await SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>());
+                await SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProd);
             }
         }
 
-        private static async Task SeedData(AppDbContext context)
+        private static async Task SeedData(AppDbContext context, bool isProd)
         {
+            if (isProd)
+            {
+              Console.WriteLine("--> Attempting to apply migrations");
+              try
+              {
+                context.Database.Migrate();
+              }
+              catch (Exception ex)
+              {
+                Console.WriteLine($"---> Could not run Migration: {ex.Message}");
+              }
+            }
             if (!await context.Platforms.AnyAsync())
             {
                 Console.WriteLine("--> Seeding Data");
