@@ -6,15 +6,15 @@ namespace PlatformService.Data
 {
   public static class PrepDb
   {
-    public static void PrepPopulation(WebApplication app, bool isProd)
+    public static async Task PrepPopulation(WebApplication app, bool isProd)
     {
-      using (var serviceScope = app.Services.CreateScope())
+      using (var serviceScope = app.Services.CreateAsyncScope())
       {
-        SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProd);
+        await SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProd);
       }
     }
 
-    public static void SeedData(AppDbContext context, bool isProd)
+    public static async Task SeedData(AppDbContext context, bool isProd)
     {
       try
       {
@@ -24,7 +24,7 @@ namespace PlatformService.Data
           try
           {
             //context.Database.Migrate();
-            context.Database.EnsureCreated();
+            await context.Database.EnsureCreatedAsync();
           }
           catch (Exception ex)
           {
@@ -32,17 +32,17 @@ namespace PlatformService.Data
           }
         }
 
-        if (!context.Platforms.Any())
+        if (!await context.Platforms.AnyAsync())
         {
           Console.WriteLine("--> Seeding Data...");
 
-          context.Platforms.AddRange(
+          await context.Platforms.AddRangeAsync(
               new Platform() { Name = "Dot Net", Publisher = "Microsoft", Cost = "Free" },
               new Platform() { Name = "SQL Server Express", Publisher = "Microsoft", Cost = "Free" },
               new Platform() { Name = "Kubernetes", Publisher = "Cloud Native Computing Foundation", Cost = "Free" }
           );
 
-          context.SaveChanges();
+          await context.SaveChangesAsync();
         }
         else
         {
