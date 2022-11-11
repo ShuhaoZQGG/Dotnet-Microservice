@@ -20,7 +20,7 @@ namespace PlatformService.Data
       return await _context.Platforms.ToListAsync();
     }
 
-    public async Task<Platform> GetPlatformById(int id)
+    public async Task<Platform> GetPlatformById(Guid id)
     {
       var platform = await _context.Platforms.FirstOrDefaultAsync(p => p.Id == id);
       if (platform == null)

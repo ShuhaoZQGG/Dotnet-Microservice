@@ -6,7 +6,7 @@ namespace PlatformService.Data
   {
     Task<bool> SaveChanges();
     Task<IEnumerable<Platform>> GetAllPlatforms();
-    Task<Platform> GetPlatformById(int id);
+    Task<Platform> GetPlatformById(Guid id);
     Task CreatePlatform(Platform platform);
   }
 }

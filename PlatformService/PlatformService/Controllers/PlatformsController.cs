@@ -32,7 +32,7 @@ namespace PlatformService.Controllers
     }
 
     [HttpGet("{id}", Name = "GetPlatformById")]
-    public async Task<ActionResult<PlatformReadDto>> GetPlatformById(int id)
+    public async Task<ActionResult<PlatformReadDto>> GetPlatformById(Guid id)
     {
       var platform = await _repo.GetPlatformById(id);
       if (platform == null)
