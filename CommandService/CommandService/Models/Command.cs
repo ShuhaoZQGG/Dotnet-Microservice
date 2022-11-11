@@ -5,16 +5,17 @@ namespace CommandService.Models
 {
   public class Command
   {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Key]
     [Required]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     [Required]
     public string HowTo { get; set; }
     [Required]
     public string CommandLine { get; set; }
     [ForeignKey("Platforms")]
     [Required]
-    public int PlatformId { get; set; }
+    public Guid PlatformId { get; set; }
     public Platform Platform { get; set; }
   }
 }
