@@ -2,14 +2,14 @@
 
 namespace PlatformService.Controllers
 {
-    [ApiController]
-    [Route("")]
-    public class HomePageController: ControllerBase
+  [ApiController]
+  [Route("")]
+  public class HomePageController : ControllerBase
+  {
+    [HttpGet]
+    public string ShowHomePage()
     {
-        [HttpGet]
-        public string ShowHomePage()
-        {
-            return "Hello, Welcome to Dotnet Microservices";
-        }
+      return "Hello, Welcome to Dotnet Microservices";
     }
+  }
 }

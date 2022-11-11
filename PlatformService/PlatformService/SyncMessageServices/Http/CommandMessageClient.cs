@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace PlatformService.SyncMessageServices.Http
 {
-  public class CommandMessageClient: ICommandMessageClient
+  public class CommandMessageClient : ICommandMessageClient
   {
     private readonly HttpClient _httpClient;
     private readonly string _platformsUrl;
@@ -29,7 +29,8 @@ namespace PlatformService.SyncMessageServices.Http
       if (response.IsSuccessStatusCode)
       {
         Console.WriteLine("--> Sync Post to Command Service is OK");
-      } else
+      }
+      else
       {
         Console.WriteLine("--> Sync Post to Command Service is Failed");
       }

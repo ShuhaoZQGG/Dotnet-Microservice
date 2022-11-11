@@ -32,7 +32,7 @@ if (builder.Environment.IsProduction())
   {
     opt.UseSqlServer(sqlServerConfig.PlatformsConnectionString);
   });
-} 
+}
 else
 {
   Console.WriteLine("---> Development Environment, Using In Memory Database");
@@ -66,8 +66,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 // Comment to run docker container
 //app.UseHttpsRedirection();
@@ -77,6 +77,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await PrepDb.PrepPopulation(app, app.Environment.IsProduction());
+PrepDb.PrepPopulation(app, app.Environment.IsProduction());
 
 app.Run();

@@ -7,10 +7,10 @@ using PlatformService.SyncMessageServices.Http;
 
 namespace PlatformService.Controllers
 {
-   [ApiController]
-   [Route("api/v1/[controller]")]
-   // [controller] will get the portion of the class name except for Controller, so here it will get name Platforms
-   public class PlatformsController: ControllerBase
+  [ApiController]
+  [Route("api/v1/[controller]")]
+  // [controller] will get the portion of the class name except for Controller, so here it will get name Platforms
+  public class PlatformsController : ControllerBase
   {
     private readonly IPlatformRepo _repo;
     private readonly IMapper _mapper;
@@ -27,19 +27,19 @@ namespace PlatformService.Controllers
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PlatformReadDto>>> GetAllPlatforms()
     {
-       var platforms = await _repo.GetAllPlatforms();
-       return Ok(_mapper.Map<IEnumerable<PlatformReadDto>>(platforms));
+      var platforms = await _repo.GetAllPlatforms();
+      return Ok(_mapper.Map<IEnumerable<PlatformReadDto>>(platforms));
     }
 
     [HttpGet("{id}", Name = "GetPlatformById")]
     public async Task<ActionResult<PlatformReadDto>> GetPlatformById(int id)
     {
-       var platform = await _repo.GetPlatformById(id);
-       if (platform == null)
-       {
-           return NotFound();
-       }
-       return Ok(_mapper.Map<PlatformReadDto>(platform));
+      var platform = await _repo.GetPlatformById(id);
+      if (platform == null)
+      {
+        return NotFound();
+      }
+      return Ok(_mapper.Map<PlatformReadDto>(platform));
     }
 
     [HttpPost]
@@ -58,7 +58,7 @@ namespace PlatformService.Controllers
       {
         _logger.LogError("---> Could not send the message syncronously: " + e.Message);
       }
-      return CreatedAtRoute(nameof(GetPlatformById), new { Id = platformReadDto.Id } ,platformReadDto);
+      return CreatedAtRoute(nameof(GetPlatformById), new { Id = platformReadDto.Id }, platformReadDto);
     }
   }
 }
