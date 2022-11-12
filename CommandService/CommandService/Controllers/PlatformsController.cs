@@ -8,17 +8,17 @@ namespace CommandService.Controllers
   [ApiController]
   public class PlatformsController : ControllerBase
   {
-	private readonly ILogger<PlatformsController> _logger;
-	public PlatformsController(ILogger<PlatformsController> logger)
-	{
-	  _logger = logger;
-	}
+    private readonly ILogger<PlatformsController> _logger;
+    public PlatformsController(ILogger<PlatformsController> logger)
+    {
+      _logger = logger;
+    }
 
-	[HttpPost]
-	public async Task<ActionResult> TestInboundConnection()
-	{
-	  _logger.LogInformation("--> Received Message");
-	  return Ok();
-	}
+    [HttpPost]
+    public async Task<ActionResult> TestInboundConnection()
+    {
+      _logger.LogInformation("--> Received Message");
+      return Ok();
+    }
   }
 }

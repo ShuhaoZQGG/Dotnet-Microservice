@@ -1,9 +1,10 @@
 ﻿using CommandService.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CommandService.Data
 {
-  public class CommandRepo: ICommandRepo
+  public class CommandRepo : ICommandRepo
   {
 	private readonly AppDbContext _context;
 	public CommandRepo(AppDbContext context)
@@ -11,49 +12,59 @@ namespace CommandService.Data
 	  _context = context;
 	}
 
-    public IEnumerable<Platform> GetPlatforms()
+	public async Task<IEnumerable<Platform>> GetPlatforms()
 	{
-	  return _context.Platforms.ToList();
+	  return await _context.Platforms.ToListAsync();
 	}
 
-	public void CreatePlatform(Platform platform)
+	public async Task CreatePlatform(Platform platform)
 	{
 	  if (platform == null)
 	  {
 		throw new ArgumentNullException(nameof(platform));
 	  }
 
-	  _context.Platforms.Add(platform);
+	  await _context.Platforms.AddAsync(platform);
 	}
-    public void CreateCommand(Guid platformId,Command command)
+	public async Task CreateCommand(Guid platformId, Command command)
 	{
 	  if (command == null)
 	  {
 		throw new ArgumentNullException(nameof(command));
 	  }
 
-      command.PlatformId = platformId;
-	  _context.Commands.Add(command);
-    }
-    public IEnumerable<Command> GetCommandsByPlatform(Guid platformId)
+	  command.PlatformId = platformId;
+	  await _context.Commands.AddAsync(command);
+	}
+	public async Task<IEnumerable<Command>> GetCommandsByPlatform(Guid platformId)
 	{
-	  return _context.Commands
+	  return await _context.Commands
 		.Where(c => c.PlatformId == platformId)
-		.OrderBy(c => c.Platform.Name);
+		.OrderBy(c => c.Platform.Name)
+		.ToListAsync();
 	}
-    public Command GetCommand(Guid platformId, Guid commandId)
+	public async Task<Command> GetCommand(Guid platformId, Guid commandId)
 	{
-	  return _context.Commands.Where(c => c.PlatformId == platformId && c.Id == commandId).FirstOrDefault();
+	  var command = await _context.Commands
+		.Where(c => c.PlatformId == platformId && c.Id == commandId)
+		.FirstOrDefaultAsync();
+
+	  if (command == null)
+	  {
+		throw new ArgumentNullException(nameof(command));
+	  }
+
+	  return command;
 	}
 
-    public bool SaveChanges()
+	public async Task<bool> SaveChanges()
 	{
-	  return _context.SaveChanges() > 0;
+	  return await _context.SaveChangesAsync() > 0;
 	}
 
-	public bool PlatformExists(Guid platformId)
+	public async Task<bool> PlatformExists(Guid platformId)
 	{
-	  return _context.Platforms.Any(p => p.Id == platformId);
+	  return await _context.Platforms.AnyAsync(p => p.Id == platformId);
 	}
   }
 }
