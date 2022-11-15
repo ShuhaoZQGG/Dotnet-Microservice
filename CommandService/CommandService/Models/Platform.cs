@@ -10,7 +10,7 @@ namespace CommandService.Models
     [Required]
     public Guid Id { get; set; }
     [Required]
-    public string ExternalId { get; set; }
+    public Guid ExternalId { get; set; }
     [Required]
     public string Name { get; set; }
     public ICollection<Command> Commands { get; set; } = new List<Command>();

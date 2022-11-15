@@ -39,8 +39,7 @@ namespace CommandService.Data
 	public async Task<IEnumerable<Command>> GetCommandsByPlatform(Guid platformId)
 	{
 	  return await _context.Commands
-		.Where(c => c.PlatformId == platformId)
-		.OrderBy(c => c.Platform.Name)
+        .Where(c => c.PlatformId == platformId)
 		.ToListAsync();
 	}
 	public async Task<Command> GetCommand(Guid platformId, Guid commandId)
