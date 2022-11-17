@@ -25,12 +25,14 @@ builder.Services.AddSwaggerGen();
 
 // Add DbContext to services
 var sqlServerConfig = builder.Configuration.GetSection("SqlServer").Get<SqlServer>();
+var rabbitmqConfig = builder.Configuration.GetSection("RabbitMq").Get<RabbitMq>();
 if (builder.Environment.IsProduction())
 {
   Console.WriteLine("---> Production Environment, Using Sql Server Database");
   builder.Services.AddDbContext<AppDbContext>(opt =>
   {
-    opt.UseSqlServer(sqlServerConfig.PlatformsConnectionString);
+    ILogger logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>();
+    opt.UseSqlServer(sqlServerConfig.PlatformsConnectionString).LogTo((message) => logger.LogInformation("SQL {sqlTrace}", message), LogLevel.Information);
   });
 }
 else

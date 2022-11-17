@@ -6,11 +6,20 @@ namespace PlatformService.Profiles
 {
   public class PlatformsProfile : Profile
   {
+    private readonly ILogger<PlatformsProfile> logger;
     public PlatformsProfile()
     {
       // Source -> Target
-      CreateMap<Platform, PlatformReadDto>();
-      CreateMap<PlatformCreateDto, Platform>();
+      try
+      {
+        CreateMap<Platform, PlatformReadDto>();
+        CreateMap<PlatformCreateDto, Platform>();
+      }
+      catch(Exception ex)
+      {
+        logger.LogError(ex.Message);
+      }
+
     }
   }
 }

@@ -17,7 +17,7 @@ namespace PlatformService.Data
 
     public async Task<IEnumerable<Platform>> GetAllPlatforms()
     {
-      return await _context.Platforms.ToListAsync();
+      return await _context.Platforms .ToListAsync();
     }
 
     public async Task<Platform> GetPlatformById(Guid id)
