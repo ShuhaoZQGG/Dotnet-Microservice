@@ -1,6 +1,7 @@
 ﻿using CommandService.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CommandService.Data
 {
@@ -38,10 +39,12 @@ namespace CommandService.Data
 	}
 	public async Task<IEnumerable<Command>> GetCommandsByPlatform(Guid platformId)
 	{
-	  return await _context.Commands
-        .Where(c => c.PlatformId == platformId)
+      return await _context.Commands
+		//.Include(c => c.Platform) // this generates a join
+		.Where(c => c.PlatformId == platformId)
+		//.OrderBy(c => c.Platform.Name)
 		.ToListAsync();
-	}
+    }
 	public async Task<Command> GetCommand(Guid platformId, Guid commandId)
 	{
 	  var command = await _context.Commands

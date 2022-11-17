@@ -10,15 +10,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("InMem"));
-builder.Services.AddScoped<ICommandRepo, CommandRepo>();
 builder.Services.AddLogging(opt =>
 {
   opt.AddSimpleConsole(opt =>
   {
     opt.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ";
   });
-}); 
+});
+builder.Services.AddDbContext<AppDbContext>(opt => {
+  ILogger logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>();
+  opt.UseInMemoryDatabase("InMem").LogTo((message) => logger.LogInformation("SQL {sqlTrace}", message), LogLevel.Information);
+ 
+});
+builder.Services.AddScoped<ICommandRepo, CommandRepo>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
