@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Configuration;
 using PlatformService.Data;
+using PlatformService.MessageBroker;
 using PlatformService.SyncMessageServices.Http;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,7 +55,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Register Configurations
 builder.Services.Configure<CommandService>(builder.Configuration.GetSection("CommandService"));
 
-builder.Services.AddHttpClient<ICommandMessageClient, CommandMessageClient>();
+builder.Services.AddHttpClient<IMessageHttpClient, MessageHttpClient>();
+
+builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
 builder.Services.AddLogging(opt =>
 {

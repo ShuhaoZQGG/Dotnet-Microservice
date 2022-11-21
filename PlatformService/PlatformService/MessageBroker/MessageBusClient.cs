@@ -2,6 +2,8 @@
 using PlatformService.Configuration;
 using PlatformService.Dtos;
 using RabbitMQ.Client;
+using System.Text;
+using System.Text.Json;
 
 namespace PlatformService.MessageBroker
 {
@@ -36,11 +38,44 @@ namespace PlatformService.MessageBroker
       }
 
     }
-    public void PublishNewPlatform(PlatformPublishedDto platformPublishedDto)
+    public void PublishNewPlatform(PlatformPublishedDto platformPublishedDto, string exchange, string routingKey)
     {
-      return;
+      try
+      {
+        var message = JsonSerializer.Serialize(platformPublishedDto);
+        if (_connection.IsOpen)
+        {
+          _logger.LogInformation("---> RabbitMq connection is open, sending message...");
+          SendMessage(exchange, routingKey, message);
+        }
+        else
+        {
+          _logger.LogInformation("---> RabbitMq connection is closed, send nothing");
+        }
+      } 
+      catch (Exception ex)
+      {
+        _logger.LogError($"Error: {ex.Message}");
+      }
+
     }
 
+    private void SendMessage(string exchange, string routingKey, string message)
+    {
+      var body = Encoding.UTF8.GetBytes(message);
+      _channel.BasicPublish(exchange, routingKey, basicProperties: null, body);
+      _logger.LogInformation($"---> We have send the message {message}");
+    }
+    
+    private void Dispose()
+    {
+      _logger.LogInformation("Message bus disposed");
+      if (_channel.IsOpen)
+      {
+        _channel.Close();
+        _channel.Dispose();
+      }
+    }
     private void RabbitMQ_ConnectionShutDown(object sender, ShutdownEventArgs e)
     {
       _logger.LogInformation("---> Rabbitmq Connection is shutting down");

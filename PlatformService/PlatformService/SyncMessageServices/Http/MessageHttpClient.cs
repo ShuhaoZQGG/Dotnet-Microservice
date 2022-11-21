@@ -6,12 +6,12 @@ using System.Text.Json;
 
 namespace PlatformService.SyncMessageServices.Http
 {
-  public class CommandMessageClient : ICommandMessageClient
+  public class MessageHttpClient : IMessageHttpClient
   {
     private readonly HttpClient _httpClient;
     private readonly string _platformsUrl;
-    private readonly ILogger<CommandMessageClient> _logger;
-    public CommandMessageClient(HttpClient httpClient, IOptions<CommandService> CommandServiceConfig, ILogger<CommandMessageClient> logger)
+    private readonly ILogger<MessageHttpClient> _logger;
+    public MessageHttpClient(HttpClient httpClient, IOptions<CommandService> CommandServiceConfig, ILogger<MessageHttpClient> logger)
     {
       _httpClient = httpClient;
       _platformsUrl = CommandServiceConfig.Value.PlatformsUrl;

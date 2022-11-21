@@ -4,6 +4,6 @@ namespace PlatformService.MessageBroker
 {
   public interface IMessageBusClient
   {
-    void PublishNewPlatform(PlatformPublishedDto platformPublishedDto);
+    void PublishNewPlatform(PlatformPublishedDto platformPublishedDto, string exchange, string routingKey);
   }
 }

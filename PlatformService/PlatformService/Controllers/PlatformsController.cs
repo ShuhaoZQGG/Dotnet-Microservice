@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data;
 using PlatformService.Dtos;
+using PlatformService.MessageBroker;
 using PlatformService.Models;
 using PlatformService.SyncMessageServices.Http;
 
@@ -14,13 +15,14 @@ namespace PlatformService.Controllers
   {
     private readonly IPlatformRepo _repo;
     private readonly IMapper _mapper;
-    private readonly ICommandMessageClient _commandMessageClient;
+    private readonly IMessageHttpClient _messageHttpClient;
+    private readonly IMessageBusClient _messageBusClient;
     private readonly ILogger<PlatformsController> _logger;
-    public PlatformsController(IPlatformRepo repository, IMapper mapper, ICommandMessageClient commandMessageClient, ILogger<PlatformsController> logger)
+    public PlatformsController(IPlatformRepo repository, IMapper mapper, IMessageHttpClient commandMessageClient, ILogger<PlatformsController> logger)
     {
       _repo = repository;
       _mapper = mapper;
-      _commandMessageClient = commandMessageClient;
+      _messageHttpClient = commandMessageClient;
       _logger = logger;
     }
 
@@ -50,14 +52,32 @@ namespace PlatformService.Controllers
       await _repo.SaveChanges();
       PlatformReadDto platformReadDto = _mapper.Map<PlatformReadDto>(platform);
       // nameof(GetPlatformById) will return what we defined at line 29 Name = "GetPlatformById"
+      
+      // send message through http client
       try
       {
-        await _commandMessageClient.SendPlatformToCommand(platformReadDto);
+        await _messageHttpClient.SendPlatformToCommand(platformReadDto);
       }
       catch (Exception e)
       {
         _logger.LogError("---> Could not send the message syncronously: " + e.Message);
+        return StatusCode(500, e);
       }
+
+      // send message through rabbitmq client
+      try
+      {
+        var platformPublishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto);
+        platformPublishedDto.Event = "Platform Published";
+        // To-do: specify exchange and routing key
+        _messageBusClient.PublishNewPlatform(platformPublishedDto, "", "");
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError($"---> Could not send the message syncronously: {ex.Message}");
+        return StatusCode(500, ex);
+      }
+
       return CreatedAtRoute(nameof(GetPlatformById), new { Id = platformReadDto.Id }, platformReadDto);
     }
   }

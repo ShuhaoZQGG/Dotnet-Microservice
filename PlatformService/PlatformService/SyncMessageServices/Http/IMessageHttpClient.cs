@@ -2,7 +2,7 @@
 
 namespace PlatformService.SyncMessageServices.Http
 {
-  public interface ICommandMessageClient
+  public interface IMessageHttpClient
   {
     Task SendPlatformToCommand(PlatformReadDto platform);
   }
