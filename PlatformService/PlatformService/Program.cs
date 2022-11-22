@@ -24,9 +24,11 @@ builder.Services.AddSwaggerGen();
 //    options.FallbackPolicy = options.DefaultPolicy;
 //});
 
+// Register Configurations
+builder.Services.Configure<CommandService>(builder.Configuration.GetSection("CommandService"));
+builder.Services.Configure<RabbitMq>(builder.Configuration.GetSection("RabbitMq"));
 // Add DbContext to services
 var sqlServerConfig = builder.Configuration.GetSection("SqlServer").Get<SqlServer>();
-var rabbitmqConfig = builder.Configuration.GetSection("RabbitMq").Get<RabbitMq>();
 if (builder.Environment.IsProduction())
 {
   Console.WriteLine("---> Production Environment, Using Sql Server Database");
@@ -51,9 +53,6 @@ builder.Services.AddScoped<IPlatformRepo, PlatformRepo>();
 
 // Register AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-// Register Configurations
-builder.Services.Configure<CommandService>(builder.Configuration.GetSection("CommandService"));
 
 builder.Services.AddHttpClient<IMessageHttpClient, MessageHttpClient>();
 

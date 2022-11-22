@@ -18,11 +18,12 @@ namespace PlatformService.Controllers
     private readonly IMessageHttpClient _messageHttpClient;
     private readonly IMessageBusClient _messageBusClient;
     private readonly ILogger<PlatformsController> _logger;
-    public PlatformsController(IPlatformRepo repository, IMapper mapper, IMessageHttpClient commandMessageClient, ILogger<PlatformsController> logger)
+    public PlatformsController(IPlatformRepo repository, IMapper mapper, IMessageHttpClient commandMessageClient, IMessageBusClient messageBusClient, ILogger<PlatformsController> logger)
     {
       _repo = repository;
       _mapper = mapper;
       _messageHttpClient = commandMessageClient;
+      _messageBusClient = messageBusClient;
       _logger = logger;
     }
 
@@ -68,14 +69,16 @@ namespace PlatformService.Controllers
       try
       {
         var platformPublishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto);
+        _logger.LogInformation($"platformPublishedDto, {platformPublishedDto.Id}, {platformPublishedDto.Name}");
         platformPublishedDto.Event = "Platform Published";
+        _logger.LogInformation($"platformPublishedDto event, {platformPublishedDto.Event}");
         // To-do: specify exchange and routing key
-        _messageBusClient.PublishNewPlatform(platformPublishedDto, "", "");
+        _messageBusClient.PublishNewPlatform(platformPublishedDto, "trigger", "");
       }
       catch (Exception ex)
       {
-        _logger.LogError($"---> Could not send the message syncronously: {ex.Message}");
-        return StatusCode(500, ex);
+        _logger.LogError($"---> Could not send the message asyncronously: {ex.Message}");
+        return StatusCode(500, ex.Message);
       }
 
       return CreatedAtRoute(nameof(GetPlatformById), new { Id = platformReadDto.Id }, platformReadDto);

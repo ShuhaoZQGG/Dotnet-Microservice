@@ -19,6 +19,9 @@ namespace PlatformService.MessageBroker
       _host = rabbitmqConfig.Value.Host;
       _port = rabbitmqConfig.Value.Port;
       _logger = logger;
+      logger.LogInformation($"rabbitmq hotst {_host}");
+      logger.LogInformation($"rabbitmq port {_port}");
+
       var factory = new ConnectionFactory()
       {
         HostName = _host,
@@ -43,6 +46,7 @@ namespace PlatformService.MessageBroker
       try
       {
         var message = JsonSerializer.Serialize(platformPublishedDto);
+        _logger.LogInformation(message);
         if (_connection.IsOpen)
         {
           _logger.LogInformation("---> RabbitMq connection is open, sending message...");

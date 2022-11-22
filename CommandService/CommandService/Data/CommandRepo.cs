@@ -68,5 +68,10 @@ namespace CommandService.Data
 	{
 	  return await _context.Platforms.AnyAsync(p => p.Id == platformId);
 	}
+
+	public async Task<bool> ExternalPlatformExists(Guid externalPlatformId)
+	{
+	  return await _context.Platforms.AnyAsync(p => p.ExternalId == externalPlatformId);
+	}
   }
 }
