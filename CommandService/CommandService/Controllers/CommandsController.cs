@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CommandService.Controllers
 {
-  [Route("api/v1/[controller]")]
+  [Route("api/v1/c/platforms/{platformId}/[controller]")]
   [ApiController]
   public class CommandsController : ControllerBase
   {
@@ -22,12 +22,12 @@ namespace CommandService.Controllers
       _repo = repo;
     }
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CommandReadDto>>> GetAllCommandsByPlatformId(Guid id)
+    public async Task<ActionResult<IEnumerable<CommandReadDto>>> GetAllCommandsByPlatformId(Guid platformId)
     {
-      _logger.LogInformation($"---> Get all commands for platform id {id}");
+      _logger.LogInformation($"---> Get all commands for platform id {platformId}");
       try
       {
-        var commands = await _repo.GetCommandsByPlatform(id);
+        var commands = await _repo.GetCommandsByPlatform(platformId);
         if (commands == null)
         {
           return NotFound();
@@ -62,20 +62,35 @@ namespace CommandService.Controllers
     }
 
     [HttpPost]
-    public async Task<ActionResult<CommandReadDto>> CreateCommandForPlatform(Guid id, CommandCreateDto commandCreateDto)
+    public async Task<ActionResult<CommandReadDto>> CreateCommandForPlatform(Guid platformId, [FromForm] CommandCreateDto commandCreateDto)
     {
-      _logger.LogInformation($"---> Create a Command {commandCreateDto.CommandLine} for platform id {id}");
+      _logger.LogInformation($"---> Create a Command {commandCreateDto.CommandLine} for platform id {platformId}");
       try
       {
         var command = _mapper.Map<Command>(commandCreateDto);
-        await _repo.CreateCommand(id, command);
+        await _repo.CreateCommand(platformId, command);
         await _repo.SaveChanges();
         var commandReadDto = _mapper.Map<CommandReadDto>(command);
         return 
           CreatedAtRoute(nameof(GetCommandForPlatform),
-          new { platformId = id, commandId = commandReadDto.Id },
+          new { platformId = platformId, commandId = commandReadDto.Id },
           commandReadDto);
       } 
+      catch (Exception ex)
+      {
+        _logger.LogError($"Error: {ex.Message}");
+        return BadRequest(ex.Message);
+      }
+    }
+
+    [HttpPost("test")]
+    public async Task<ActionResult> CreatePlatformId(Guid platformId)
+    {
+      try
+      {
+        _logger.LogInformation(platformId.ToString());
+        return Ok();
+      }
       catch (Exception ex)
       {
         _logger.LogError($"Error: {ex.Message}");

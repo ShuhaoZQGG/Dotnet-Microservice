@@ -2,6 +2,6 @@
 {
   public interface IEvent
   {
-    void ProcessEvent(string message);
+    Task ProcessEvent(string message);
   }
 }

@@ -19,14 +19,14 @@ namespace CommandService.Event
       _logger = logger;
     }
 
-    public void ProcessEvent(string message)
+    public async Task ProcessEvent(string message)
     {
       var eventType = DeterminEventType(message);
 
       switch (eventType)
       {
         case EventType.PlatformPublished:
-          //To Do
+          await addPlatform(message);
           break;
         default:
           break;
@@ -61,6 +61,7 @@ namespace CommandService.Event
           {
             await repo.CreatePlatform(plat);
             await repo.SaveChanges();
+            _logger.LogInformation($"Platform added {plat.Name}");
           } 
           else
           {

@@ -34,13 +34,19 @@ namespace CommandService.Data
 		throw new ArgumentNullException(nameof(command));
 	  }
 
+	  if (!await PlatformExists(platformId))
+	  {
+		throw new ArgumentNullException(platformId.ToString());
+	  }
+
 	  command.PlatformId = platformId;
 	  await _context.Commands.AddAsync(command);
 	}
 	public async Task<IEnumerable<Command>> GetCommandsByPlatform(Guid platformId)
 	{
       return await _context.Commands
-		//.Include(c => c.Platform) // this generates a join
+		// this generates a join
+		//.Include(c => c.Platform)
 		.Where(c => c.PlatformId == platformId)
 		//.OrderBy(c => c.Platform.Name)
 		.ToListAsync();

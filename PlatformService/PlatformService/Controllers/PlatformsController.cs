@@ -70,7 +70,7 @@ namespace PlatformService.Controllers
       {
         var platformPublishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto);
         _logger.LogInformation($"platformPublishedDto, {platformPublishedDto.Id}, {platformPublishedDto.Name}");
-        platformPublishedDto.Event = "Platform Published";
+        platformPublishedDto.Event = "Platform_Published";
         _logger.LogInformation($"platformPublishedDto event, {platformPublishedDto.Event}");
         // To-do: specify exchange and routing key
         _messageBusClient.PublishNewPlatform(platformPublishedDto, "trigger", "");
