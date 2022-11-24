@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PlatformService.Configuration;
 using PlatformService.Data;
 using PlatformService.MessageBroker;
+using PlatformService.SyncMessageServices.Grpc;
 using PlatformService.SyncMessageServices.Http;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,12 +42,15 @@ if (builder.Environment.IsProduction())
 else
 {
   Console.WriteLine("---> Development Environment, Using In Memory Database");
+  Console.WriteLine($"{sqlServerConfig.PlatformsConnectionString}");
+
   builder.Services.AddDbContext<AppDbContext>(opt =>
   {
     opt.UseInMemoryDatabase("InMem");
   });
 }
 
+builder.Services.AddGrpc();
 
 // Register services for dependency injection
 builder.Services.AddScoped<IPlatformRepo, PlatformRepo>();
@@ -77,10 +81,25 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 //app.UseAuthentication();
+app.UseRouting();
 app.UseAuthorization();
 
+
 app.MapControllers();
-
+app.MapGrpcService<GrpcPlatformService>();
+app.MapGet("/Protos/Platforms.proto", async context =>
+{
+  await context.Response.WriteAsync(File.ReadAllText("Protos/Platforms.proto"));
+});
 await PrepDb.PrepPopulation(app, app.Environment.IsProduction());
+//app.UseEndpoints(endpoints =>
+//{
+//  endpoints.MapControllers();
+//  endpoints.MapGrpcService<GrpcPlatformService>();
 
+//  endpoints.MapGet("/protos/platforms.proto", async context =>
+//  {
+//    await context.Response.WriteAsync(File.ReadAllText("Protos/platforms.proto"));
+//  });
+//});
 app.Run();

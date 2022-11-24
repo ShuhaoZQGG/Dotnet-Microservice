@@ -17,11 +17,9 @@ namespace CommandService.Message
     private IConnection _connection;
     private IModel _channel;
     private string _queueName;
-    private readonly IConfiguration _config;
 
-    public MessageBusSubscriber(IConfiguration config, IOptions<RabbitMq> rabbitMqConfig, IEvent eventProcessor, ILogger<MessageBusSubscriber> logger)
+    public MessageBusSubscriber(IOptions<RabbitMqConfig> rabbitMqConfig, IEvent eventProcessor, ILogger<MessageBusSubscriber> logger)
     { 
-      _config = config;
       _host = rabbitMqConfig.Value.Host;
       _port = rabbitMqConfig.Value.Port;
       _eventProcessor = eventProcessor;
